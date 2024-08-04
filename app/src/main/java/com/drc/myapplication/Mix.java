@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.material.behavior.SwipeDismissBehavior;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,6 +34,8 @@ public class Mix {
     private static Runnable runnable;
 
     private static boolean isAnimating = false;
+
+//    BaseTransientBottomBar.Behavior behavior = BaseTransientBottomBar.Behavior.SWIPE_DIRECTION_ANY
 
     public static void defaultTopSnack(Context context, @NonNull View activityLayout, @Nullable String action, @Nullable Integer animationDuration, @Nullable Integer displayLength) {
 
@@ -53,29 +56,32 @@ public class Mix {
             displayLength = 3000;
         }
 
+
+
         Animation slideDown = getSlideDown(animationDuration, topInset);
 
         Animation slideUp = getSlideUp(animationDuration, topInset);
 
 
-        Snackbar snackbar = Snackbar.make(activityLayout, "Sample", displayLength);
-        View view = snackbar.getView();
+        snackbar = Snackbar.make(activityLayout, "Sample", Snackbar.LENGTH_INDEFINITE);
+        view1 = snackbar.getView();
         if (action != null) {
             snackbar.setAction(action, v -> hideTopSnack(context));
         }
 
-
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view.getLayoutParams();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view1.getLayoutParams();
         layoutParams.gravity = Gravity.TOP | Gravity.CENTER_VERTICAL;
         layoutParams.setMargins(0, topInset, 0, 0); // Set top margin based on status bar height
-        view.setLayoutParams(layoutParams);
+        view1.setLayoutParams(layoutParams);
 
-        view.startAnimation(slideDown);
+        view1.startAnimation(slideDown);
 
         snackbar.show();
         autoHide(context);
+
     }
 
+    
     public static void createCustomTopSnack(Context context, @NonNull View activityLayout, @NonNull View customLayout, @Nullable Integer animationDuration, @Nullable Integer displayLength) {
 
         int topInset = removeStatusBar(context);
@@ -133,7 +139,6 @@ public class Mix {
                 Log.d("TAG", "after: 4sec ");
                 // After 4 seconds, run this following code
 
-                if (snackbar.isShown() || view1.getVisibility() == View.VISIBLE){
                     view1.startAnimation(slideUp);
 
                     // After animation, dismiss
@@ -146,7 +151,6 @@ public class Mix {
                             Log.d("TAG", "dismissed? " + snackbar.isShown());
                         }
                     }, slideUp.getDuration());
-                }
             }
         };
         handler.postDelayed(runnable, DefaultDisplayLength_4000ms);

@@ -56,19 +56,19 @@ public class TopSnack {
         Animation slideUp = getSlideUp(animationDuration, topInset);
 
 
-        Snackbar snackbar = Snackbar.make(activityLayout, "Sample", displayLength);
-        View view = snackbar.getView();
+        snackbar = Snackbar.make(activityLayout, "Sample", displayLength);
+        view1 = snackbar.getView();
         if (action != null) {
             snackbar.setAction(action, v -> hideTopSnack(context));
         }
 
 
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view.getLayoutParams();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view1.getLayoutParams();
         layoutParams.gravity = Gravity.TOP | Gravity.CENTER_VERTICAL;
         layoutParams.setMargins(0, topInset, 0, 0); // Set top margin based on status bar height
-        view.setLayoutParams(layoutParams);
+        view1.setLayoutParams(layoutParams);
 
-        view.startAnimation(slideDown);
+        view1.startAnimation(slideDown);
 
         snackbar.show();
         autoHide(context);

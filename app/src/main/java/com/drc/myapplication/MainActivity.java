@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TopSnack.defaultTopSnack(MainActivity.this, main, "Dismiss", 500, 5000);
+                Mix.defaultTopSnack(MainActivity.this, main, "Dismiss", 500, 5000);
             }
         });
 
