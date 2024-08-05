@@ -21,7 +21,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.drc.mytopsnacklibrary.TopSnack;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,10 +75,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
 //                        SampleOfTopSnack.hideTopSnackManually(MainActivity.this);
-                        TopSnack.hideTopSnack(MainActivity.this);
+//                        TopSnack.hideTopSnack(MainActivity.this);
                     }
                 });
-                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
+//                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
             }
         });
     }
