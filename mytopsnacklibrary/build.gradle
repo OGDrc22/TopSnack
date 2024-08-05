@@ -26,6 +26,17 @@ android {
     }
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.OGDrc22'
+            artifactId = 'TopSnack'
+            version = '1.0'
+
+//            from components.java
+        }
+    }
+}
 
 dependencies {
 
