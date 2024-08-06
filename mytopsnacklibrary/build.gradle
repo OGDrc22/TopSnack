@@ -53,8 +53,8 @@ publishing {
     }
 }
 
-tasks.withType(PublishToMavenLocal).configureEach {
-    dependsOn(tasks.bundleReleaseAar)
+tasks.withType(MavenPublication).configureEach {
+    dependsOn(tasks.bundleDebugAar)
 }
 
 
