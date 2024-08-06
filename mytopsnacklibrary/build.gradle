@@ -29,20 +29,29 @@ android {
     }
 }
 
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId = 'com.github.OGDrc22'
+//            artifactId = 'TopSnack'
+//            version = '1.0'
+//
+//            from components.java
+//        }
+//    }
+//}
+
 publishing {
     publications {
-        release(MavenPublication) {
-            groupId = 'com.github.OGDrc22'
-            artifactId = 'TopSnack'
-            version = '1.0'
-
-            artifact("$buildDir/outputs/aar/mytopsnacklibrary-debug.aar")
-
-//            pom {
-//                withXml {
-//                    asNode().appendNode('description', 'My Top Snack Library')
-//                }
-//            }
+        mavenJava(MavenPublication) {
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
     }
 }
