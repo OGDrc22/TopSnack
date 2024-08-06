@@ -18,6 +18,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix 'v1.0.1'
+            signingConfig signingConfigs.debug
+            consumerProguardFiles
         }
     }
     compileOptions {
@@ -28,12 +31,24 @@ android {
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        release(MavenPublication) {
             groupId = 'com.github.OGDrc22'
             artifactId = 'TopSnack'
             version = '1.0'
 
-//            from components.java
+            artifact("$buildDir/outputs/aar/mytopsnacklibrary-debug.aar")
+
+            pom {
+                withXml {
+                    asNode().appendNode('description', 'My Top Snack Library')
+                }
+            }
+
+//            afterEvaluate {
+////                from components.find
+////                artifacts {tasks.getName("bundle")}
+//                println("Components: " + components*.name)
+//            }
         }
     }
 }
