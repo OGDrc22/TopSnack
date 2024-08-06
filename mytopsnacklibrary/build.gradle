@@ -53,6 +53,11 @@ publishing {
     }
 }
 
+tasks.withType(PublishToMavenLocal).configureEach {
+    dependsOn(tasks.bundleReleaseAar)
+}
+
+
 dependencies {
 
     implementation libs.appcompat
