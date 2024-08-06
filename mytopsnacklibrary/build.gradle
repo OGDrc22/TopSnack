@@ -38,19 +38,19 @@ publishing {
 
             artifact("$buildDir/outputs/aar/mytopsnacklibrary-debug.aar")
 
-            pom {
-                withXml {
-                    asNode().appendNode('description', 'My Top Snack Library')
-                }
-            }
+//            pom {
+//                withXml {
+//                    asNode().appendNode('description', 'My Top Snack Library')
+//                }
+//            }
         }
     }
 }
 
-tasks.withType(MavenPublication).configureEach {
-    dependsOn(tasks.bundleReleaseAar)
-}
-
+//tasks.withType(MavenPublication).configureEach {
+//    dependsOn(tasks.bundleReleaseAar)
+//}
+//
 
 dependencies {
 
