@@ -19,8 +19,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix 'v1.0.1'
-            signingConfig signingConfigs.debug
-            consumerProguardFiles
+//            signingConfig signingConfigs.release
+            consumerProguardFiles 'consumer-rules,pro'
         }
     }
     compileOptions {
@@ -43,18 +43,12 @@ publishing {
                     asNode().appendNode('description', 'My Top Snack Library')
                 }
             }
-
-//            afterEvaluate {
-////                from components.find
-////                artifacts {tasks.getName("bundle")}
-//                println("Components: " + components*.name)
-//            }
         }
     }
 }
 
 tasks.withType(MavenPublication).configureEach {
-    dependsOn(tasks.bundleDebugAar)
+    dependsOn(tasks.bundleReleaseAar)
 }
 
 
