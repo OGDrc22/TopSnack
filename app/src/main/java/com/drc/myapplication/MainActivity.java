@@ -14,12 +14,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+
+import com.drc.mytopsnacklibrary.TopSnack;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -59,15 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));// Requires VIBRATE permission
 
-                LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.custom_snackbar, null);
-                ImageView imageView = view.findViewById(R.id.imageView);
-                imageView.setImageResource(R.drawable.ic_launcher_foreground);
-                TextView textView, textView1;
-                textView = view.findViewById(R.id.textView1);
-                textView1 = view.findViewById(R.id.textView2);
-//                textView.setText("Aghhh");
-//                textView1.setText("1111111");
+                View view = getCustomView(MainActivity.this, R.layout.custom_snackbar, R.id.imageView, R.drawable.ic_launcher_foreground, R.id.textView1, "Title", R.id.textView2, "Sub title");
                 Button action = view.findViewById(R.id.action);
                 action.setText("Dismiss");
                 action.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +76,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 //                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
+//                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
             }
         });
+    }
+
+    private @NonNull View getCustomView(@NonNull Context context, @NonNull Integer customLayout, @Nullable Integer iconHolder, @Nullable Integer icon, @Nullable Integer mainMessageTextView, @Nullable String mainMessage, @Nullable Integer descriptionTextView, @Nullable String description) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(customLayout, null);
+        ImageView imageView = view.findViewById(iconHolder);
+        imageView.setImageResource(icon);
+        TextView textView, textView1;
+        textView = view.findViewById(mainMessageTextView);
+        textView1 = view.findViewById(descriptionTextView);
+        textView.setText(mainMessage);
+        textView1.setText(description);
+        return view;
     }
 }
