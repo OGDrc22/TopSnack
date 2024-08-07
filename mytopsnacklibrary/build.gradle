@@ -44,6 +44,8 @@ android {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId = 'com.github.OGDrc22'
+            artifactId = 'TopSnack'
             versionMapping {
                 usage('java-api') {
                     fromResolutionOf('runtimeClasspath')
