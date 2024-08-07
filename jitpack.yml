@@ -1,5 +1,9 @@
 jdk:
   - openjdk17
+
 before_install:
-  - sdk install java 17.0.10-open
-  - sdk use java 17.0.10-open
+  - ./prepareJitpackEnvironment
+
+install:
+  - FILE=mytopsnacklibrary/build/outputs/aar/mytopsnacklibrary-release.aar
+  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.OGDrc22 -DartifactId=TopSnack -Dversion=1.0 -Dpackaging=aar -DgeneratePom=true

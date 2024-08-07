@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Project Information -->
+    <groupId>com.github.OGDrc22</groupId>
+    <artifactId>TopSnack</artifactId>
+    <version>1.0</version>
+    <packaging>aar</packaging>
+
+    <name>TopSnack Library</name>
+    <description>A custom Android library for top-positioned snackbars.</description>
+    <url>https://github.com/OGDrc22/TopSnack</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>OGDrc22</id>
+            <name>Your Name</name>
+            <email>your.email@example.com</email>
+            <url>https://github.com/OGDrc22</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/OGDrc22/TopSnack.git</connection>
+        <developerConnection>scm:git:ssh://github.com:OGDrc22/TopSnack.git</developerConnection>
+        <url>https://github.com/OGDrc22/TopSnack</url>
+    </scm>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>androidx.appcompat</groupId>
+            <artifactId>appcompat</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android.material</groupId>
+            <artifactId>material</artifactId>
+            <version>1.9.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>androidx.test.ext</groupId>
+            <artifactId>junit</artifactId>
+            <version>1.1.5</version>
+            <scope>androidTest</scope>
+        </dependency>
+        <dependency>
+            <groupId>androidx.test.espresso</groupId>
+            <artifactId>espresso-core</artifactId>
+            <version>3.5.1</version>
+            <scope>androidTest</scope>
+        </dependency>
+    </dependencies>
+
+</project>
