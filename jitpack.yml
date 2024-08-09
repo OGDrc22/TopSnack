@@ -5,5 +5,5 @@ before_install:
   - ./prepareJitpackEnvironment
 
 install:
-  - FILE=mytopsnacklibrary/build/outputs/aar/TopSnack-release.aar
+  - FILE=TopSnack/build/outputs/aar/TopSnack-release.aar
   - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.OGDrc22 -DartifactId=TopSnack -Dversion=1.0 -Dpackaging=aar -DgeneratePom=true
