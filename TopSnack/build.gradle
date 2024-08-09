@@ -1,16 +1,16 @@
-buildscript {
-    ext.kotlin_version = '1.7.20'
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()            // << --- ADD This
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
+//buildscript {
+//    ext.kotlin_version = '1.7.20'
+//    repositories {
+//        google()
+//        mavenCentral()
+//        mavenLocal()            // << --- ADD This
+//    }
+//
+//    dependencies {
+//        classpath 'com.android.tools.build:gradle:7.1.3'
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//    }
+//}
 
 plugins {
     alias(libs.plugins.android.library)
@@ -46,19 +46,25 @@ android {
 
 
 // 5. Publishing:
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.OGDrc22'
-            artifactId = 'TopSnack'
-            version = "1.0"
-            pom {
-                description = 'MY FIRST ANDROID LIBRARY'
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'com.github.OGDrc22'
+                artifactId = 'TopSnack'
+                version = "1.0"
+                pom {
+                    description = 'MY FIRST ANDROID LIBRARY'
+                }
             }
         }
-    }
-    repositories {               // << --- ADD This
-        mavenLocal()
+        repositories {               // << --- ADD This
+//            mavenLocal()
+            maven {
+                name = 'TopSnack'
+                url "https://github.com/OGDrc22/TopSnack.git"
+            }
+        }
     }
 }
 //publishing {
