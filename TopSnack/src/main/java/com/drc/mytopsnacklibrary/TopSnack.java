@@ -85,6 +85,10 @@ public class TopSnack {
             displayLength = DefaultDisplayLength_4000ms;
         }
 
+        if (customLayout.getParent() != null) {
+            ((ViewGroup) customLayout.getParent()).removeView(customLayout);
+        }
+
         snackbar = Snackbar.make(activityLayout, "", displayLength);
         handler.removeCallbacks(runnable);
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();

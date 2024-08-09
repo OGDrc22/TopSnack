@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,9 +75,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 //                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
-//                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
             }
         });
+
+        TextView textView = findViewById(R.id.textView);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = getCustomView(MainActivity.this, R.layout.custom_snackbar, R.id.imageView, R.drawable.ic_launcher_foreground, R.id.textView1, "I love you LORD", R.id.textView2, "Sub title");
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
+            }
+        });
+
     }
 
     private @NonNull View getCustomView(@NonNull Context context, @NonNull Integer customLayout, @Nullable Integer iconHolder, @Nullable Integer icon, @Nullable Integer mainMessageTextView, @Nullable String mainMessage, @Nullable Integer descriptionTextView, @Nullable String description) {
