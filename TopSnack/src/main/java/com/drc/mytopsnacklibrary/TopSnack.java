@@ -108,7 +108,7 @@ public class TopSnack {
 
         // Directly move the snackbar to the top of its parent
         FrameLayout.LayoutParams snackbarLayoutParams = (FrameLayout.LayoutParams) snackbarLayout.getLayoutParams();
-        snackbarLayoutParams.gravity = Gravity.CENTER;
+        snackbarLayoutParams.gravity = Gravity.TOP | Gravity.CENTER;
         snackbarLayout.setLayoutParams(snackbarLayoutParams);
 
         view1 = snackbar.getView();
