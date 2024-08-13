@@ -3,6 +3,7 @@ package com.drc.mytopsnacklibrary;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -69,6 +70,9 @@ public class TopSnack {
         view1.setLayoutParams(layoutParams);
 
         view1.startAnimation(slideDown);
+
+        final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
+        mp.start();
 
         snackbar.show();
         autoHide(context);
