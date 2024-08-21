@@ -37,8 +37,9 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation project(':TopSnack')
 
-    //    implementation 'com.github.OGDrc22:TopSnack:v1.0.1'
+    implementation project(":TopSnack")
+
+//    implementation 'com.github.OGDrc22:TopSnack:0.0.5'
 
 }

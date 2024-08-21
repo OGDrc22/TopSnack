@@ -2,21 +2,28 @@ package com.drc.myapplication;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.graphics.Insets;
@@ -24,6 +31,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.drc.mytopsnacklibrary.TopSnack;
+import com.drc.mytopsnacklibrary.TopSnackBeta;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -50,11 +58,22 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mix.defaultTopSnack(MainActivity.this, main, "Dismiss", 500, 5000);
+                TopSnack.defaultTopSnack(MainActivity.this, main, "Hello", "Dismiss", null, null, true);
+                int d = TopSnack.getDuration();
+                Log.d("TAG", "onClick: " + d);
             }
         });
 
         Vibrator vibrator = MainActivity.this.getSystemService(Vibrator.class);
+        CoordinatorLayout overActivity;
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        overActivity = (CoordinatorLayout) inflater.inflate(R.layout.coords, null);
+//        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) overActivity.getLayoutParams();
+//        lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+//        overActivity.setLayoutParams(lp);
+//        overActivity.setVisibility(View.GONE);
+//        main.addView(overActivity);
+
 
         Button btn2 = findViewById(R.id.btn2);
         btn2.setOnClickListener(new View.OnClickListener() {
@@ -71,12 +90,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
 //                        SampleOfTopSnack.hideTopSnackManually(MainActivity.this);
-//                        TopSnack.hideTopSnack(MainActivity.this);
+                        TopSnack.hideTopSnack(MainActivity.this);
                     }
                 });
-//                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
-                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
-            }
+
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true);
+                int d = TopSnack.getDuration();
+                Log.d("TAG", "onClick: " + d);
+             }
         });
 
         TextView textView = findViewById(R.id.textView);
@@ -84,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 View view = getCustomView(MainActivity.this, R.layout.custom_snackbar, R.id.imageView, R.drawable.ic_launcher_foreground, R.id.textView1, "I love you LORD", R.id.textView2, "Sub title");
-                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, 5000);
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true);
             }
         });
 

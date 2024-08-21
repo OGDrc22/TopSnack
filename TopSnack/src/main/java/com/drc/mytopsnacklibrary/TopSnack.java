@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class TopSnack {
 
     private static final Integer DefaultAnimationDuration_500ms = 500;
-    private static final Integer DefaultDisplayLength_4000ms = 4000;
+    private static final Integer DefaultDisplayLength_5000ms = 5000;
 
     private static Snackbar snackbar;
     private static View view1;
@@ -33,7 +33,11 @@ public class TopSnack {
 
     private static boolean isAnimating = false;
 
-    public static void defaultTopSnack(Context context, @NonNull View activityLayout, @Nullable String action, @Nullable Integer animationDuration, @Nullable Integer displayLength) {
+    private static int duration;
+    private static long durationSlideUp;
+    private static long durationSlideDown;
+
+    public static void defaultTopSnack(Context context, @NonNull View activityLayout, @Nullable String message, @Nullable String action, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound) {
 
         int topInset;
 
@@ -46,18 +50,17 @@ public class TopSnack {
         }
 
         if (animationDuration == null) {
-            animationDuration = 300;
+            animationDuration = DefaultAnimationDuration_500ms;
         }
         if (displayLength == null) {
-            displayLength = 3000;
+            displayLength = DefaultDisplayLength_5000ms;
         }
 
         Animation slideDown = getSlideDown(animationDuration, topInset);
+        durationSlideDown = slideDown.getDuration();
 
-        Animation slideUp = getSlideUp(animationDuration, topInset);
 
-
-        snackbar = Snackbar.make(activityLayout, "Sample", displayLength);
+        snackbar = Snackbar.make(activityLayout, message, displayLength);
         view1 = snackbar.getView();
         if (action != null) {
             snackbar.setAction(action, v -> hideTopSnack(context));
@@ -75,10 +78,10 @@ public class TopSnack {
         mp.start();
 
         snackbar.show();
-        autoHide(context);
+        autoHide(context, displayLength);
     }
 
-    public static void createCustomTopSnack(Context context, @NonNull View activityLayout, @NonNull View customLayout, @Nullable Integer animationDuration, @Nullable Integer displayLength) {
+    public static void createCustomTopSnack(Context context, @NonNull View activityLayout, @NonNull View customLayout, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound) {
 
         int topInset = removeStatusBar(context);
 
@@ -86,7 +89,7 @@ public class TopSnack {
             animationDuration = DefaultAnimationDuration_500ms;
         }
         if (displayLength == null) {
-            displayLength = DefaultDisplayLength_4000ms;
+            displayLength = DefaultDisplayLength_5000ms;
         }
 
         if (customLayout.getParent() != null) {
@@ -119,13 +122,18 @@ public class TopSnack {
 
         Animation slideDown = getSlideDown(animationDuration, topInset);
         view1.startAnimation(slideDown);
+        durationSlideDown = slideDown.getDuration();
+
+
+        final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
+        mp.start();
 
         snackbar.show();
-        autoHide(context);
+        autoHide(context, displayLength);
 
     }
 
-    private static void autoHide(Context context) {
+    private static void autoHide(Context context, int displayLength) {
 
 //        Log.d("TAG", "autoHide: called success");
 
@@ -136,8 +144,6 @@ public class TopSnack {
         runnable = new Runnable() {
             @Override
             public void run() {
-                Log.d("TAG", "after: 4sec ");
-                // After 4 seconds, run this following code
 
                 if (snackbar.isShown() || view1.getVisibility() == View.VISIBLE){
                     view1.startAnimation(slideUp);
@@ -155,7 +161,9 @@ public class TopSnack {
                 }
             }
         };
-        handler.postDelayed(runnable, DefaultDisplayLength_4000ms);
+        handler.postDelayed(runnable, displayLength);
+        duration = displayLength;
+        durationSlideUp = slideUp.getDuration();
     }
 
     public static void hideTopSnack(@NonNull Context context) {
@@ -192,6 +200,10 @@ public class TopSnack {
         return topInset;
     }
 
+    public static int getDuration() {
+        return (int) (durationSlideDown + duration + durationSlideUp);
+    }
+
     private static @NonNull Animation getSlideUp(@NonNull Integer animationDuration, int topInset) {
         Animation slideUp = new TranslateAnimation(
                 0, 0, 0, -(topInset * 3)
@@ -211,5 +223,6 @@ public class TopSnack {
         isAnimating = true;
         return slideDown;
     }
+
 }
 
