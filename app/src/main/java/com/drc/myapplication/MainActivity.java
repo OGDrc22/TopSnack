@@ -31,7 +31,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.drc.mytopsnacklibrary.TopSnack;
-import com.drc.mytopsnacklibrary.TopSnackBeta;
+import com.drc.mytopsnacklibrary.TopSnack2;
+import com.drc.mytopsnacklibrary.TopSnack;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TopSnack.defaultTopSnack(MainActivity.this, main, "Hello", "Dismiss", null, null, true);
+                TopSnack.defaultTopSnack(MainActivity.this, main, "Hello", "Dismiss", null, null, true, "up");
                 int d = TopSnack.getDuration();
                 Log.d("TAG", "onClick: " + d);
             }
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true);
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true, "up");
                 int d = TopSnack.getDuration();
                 Log.d("TAG", "onClick: " + d);
              }
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 View view = getCustomView(MainActivity.this, R.layout.custom_snackbar, R.id.imageView, R.drawable.ic_launcher_foreground, R.id.textView1, "I love you LORD", R.id.textView2, "Sub title");
-                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true);
+                TopSnack.createCustomTopSnack(MainActivity.this, main, view, null, null, true, null);
             }
         });
 

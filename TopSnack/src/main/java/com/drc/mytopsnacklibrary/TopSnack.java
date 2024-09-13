@@ -7,9 +7,12 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
@@ -20,24 +23,25 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.Nullable;
 
-public class TopSnack {
+public class TopSnack implements GestureDetector.OnGestureListener{
 
     private static final Integer DefaultAnimationDuration_500ms = 500;
     private static final Integer DefaultDisplayLength_5000ms = 5000;
 
     private static Snackbar snackbar;
-    private static View view1;
+    private static View snackBarView;
 
     private static final Handler handler = new Handler();
-    private static Runnable runnable;
+    private static Runnable runnableAutoHide;
 
     private static boolean isAnimating = false;
+    private static boolean isOnHold = false;
 
     private static int duration;
     private static long durationSlideUp;
     private static long durationSlideDown;
 
-    public static void defaultTopSnack(Context context, @NonNull View activityLayout, @Nullable String message, @Nullable String action, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound) {
+    public static void defaultTopSnack(Context context, @NonNull View activityLayout, @Nullable String message, @Nullable String action, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound, @NonNull String swipeDirection) {
 
         int topInset;
 
@@ -61,27 +65,41 @@ public class TopSnack {
 
 
         snackbar = Snackbar.make(activityLayout, message, displayLength);
-        view1 = snackbar.getView();
+        snackBarView = snackbar.getView();
         if (action != null) {
             snackbar.setAction(action, v -> hideTopSnack(context));
         }
 
 
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view1.getLayoutParams();
-        layoutParams.gravity = Gravity.TOP | Gravity.CENTER_VERTICAL;
-        layoutParams.setMargins(0, topInset, 0, 0); // Set top margin based on status bar height
-        view1.setLayoutParams(layoutParams);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) snackBarView.getLayoutParams();
+//      layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+        layoutParams.setMargins(0, topInset, 0, 0);
+        if (swipeDirection == null) {
+            layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+        } else if (swipeDirection.equalsIgnoreCase("down")) {
+            layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
+            layoutParams.setMargins(0, 0, 0, topInset);
+        } else if (swipeDirection.equalsIgnoreCase("up")) {
+            layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+        }
+        snackBarView.setLayoutParams(layoutParams);
 
-        view1.startAnimation(slideDown);
+        snackBarView.startAnimation(slideDown);
 
-        final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
-        mp.start();
+        snackBarView.setOnTouchListener(new TopSnack.MyOnTouchListener(snackBarView, snackbar, swipeDirection));
+
+        if (hasNotificationSound) {
+            final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
+            mp.start();
+        }
 
         snackbar.show();
-        autoHide(context, displayLength);
+        autoHide(context, displayLength, swipeDirection);
     }
 
-    public static void createCustomTopSnack(Context context, @NonNull View activityLayout, @NonNull View customLayout, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound) {
+
+
+    public static void createCustomTopSnack(Context context, @NonNull View activityLayout, @NonNull View customLayout, @Nullable Integer animationDuration, @Nullable Integer displayLength, boolean hasNotificationSound, @NonNull String swipeDirection) {
 
         int topInset = removeStatusBar(context);
 
@@ -96,8 +114,8 @@ public class TopSnack {
             ((ViewGroup) customLayout.getParent()).removeView(customLayout);
         }
 
-        snackbar = Snackbar.make(activityLayout, "", displayLength);
-        handler.removeCallbacks(runnable);
+        snackbar = Snackbar.make(activityLayout, "", Snackbar.LENGTH_INDEFINITE);
+        handler.removeCallbacks(runnableAutoHide);
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
         snackbarLayout.setPadding(0, 0, 0, 0);
         snackbarLayout.addView(customLayout, 0);
@@ -115,53 +133,84 @@ public class TopSnack {
 
         // Directly move the snackbar to the top of its parent
         FrameLayout.LayoutParams snackbarLayoutParams = (FrameLayout.LayoutParams) snackbarLayout.getLayoutParams();
-        snackbarLayoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+//        snackbarLayoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+        if (swipeDirection == null) {
+            snackbarLayoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+        } else if (swipeDirection.equalsIgnoreCase("down")) {
+            snackbarLayoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
+            layoutParams.setMargins(0, 0, 0, topInset);
+        } else if (swipeDirection.equalsIgnoreCase("up")) {
+            snackbarLayoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+            layoutParams.setMargins(0, topInset, 0, 0);
+        }
         snackbarLayout.setLayoutParams(snackbarLayoutParams);
 
-        view1 = snackbar.getView();
+        snackBarView = snackbar.getView();
 
         Animation slideDown = getSlideDown(animationDuration, topInset);
-        view1.startAnimation(slideDown);
+        snackBarView.startAnimation(slideDown);
         durationSlideDown = slideDown.getDuration();
 
 
-        final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
-        mp.start();
+
+        if (hasNotificationSound){
+            final MediaPlayer mp = MediaPlayer.create(context, R.raw.message_notification_190034);
+            mp.start();
+        }
 
         snackbar.show();
-        autoHide(context, displayLength);
+
+
+        autoHide(context, displayLength, swipeDirection);
+        snackBarView.setOnTouchListener(new TopSnack.MyOnTouchListener(snackBarView, snackbar, swipeDirection));
 
     }
 
-    private static void autoHide(Context context, int displayLength) {
+    private static void autoHide(Context context, int displayLength, String direction) {
 
-//        Log.d("TAG", "autoHide: called success");
+        Log.d("TAG", "autoHide: called success");
 
         int topInset = removeStatusBar(context);
 
         Animation slideUp = getSlideUp(DefaultAnimationDuration_500ms, topInset);
+        Animation slideDown = getSlideDown(DefaultAnimationDuration_500ms, topInset);
+        Animation fade = getFadeAnim(DefaultAnimationDuration_500ms, topInset);
+//        isOnHold = true;
 
-        runnable = new Runnable() {
-            @Override
-            public void run() {
 
-                if (snackbar.isShown() || view1.getVisibility() == View.VISIBLE){
-                    view1.startAnimation(slideUp);
+        if (!isOnHold) {
+            runnableAutoHide = new Runnable() {
+                @Override
+                public void run() {
 
-                    // After animation, dismiss
-                    view1.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // After 500 milliseconds, run this following code
-                            snackbar.dismiss();
+                    Log.d("Swipe", "run:onHold " + isOnHold);
 
-                            Log.d("TAG", "dismissed? " + snackbar.isShown());
+                    if (snackbar.isShown() || snackBarView.getVisibility() == View.VISIBLE) {
+                        if (direction == null) {
+                            snackBarView.startAnimation(fade);
+                        } else if (direction.equalsIgnoreCase("up")) {
+                            snackBarView.startAnimation(slideUp);
+                        } else if (direction.equalsIgnoreCase("down")) {
+                            snackBarView.startAnimation(slideDown);
                         }
-                    }, slideUp.getDuration());
+
+                        // After animation, dismiss
+                        snackBarView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // After 500 milliseconds, run this following code
+                                snackbar.dismiss();
+
+                                Log.d("TAG", "dismissed? " + snackbar.isShown());
+                            }
+                        }, slideUp.getDuration());
+                    }
                 }
-            }
-        };
-        handler.postDelayed(runnable, displayLength);
+            };
+        }
+
+        handler.removeCallbacks(runnableAutoHide);
+        handler.postDelayed(runnableAutoHide, displayLength);
         duration = displayLength;
         durationSlideUp = slideUp.getDuration();
     }
@@ -169,18 +218,18 @@ public class TopSnack {
     public static void hideTopSnack(@NonNull Context context) {
 
         int topInset = removeStatusBar(context);
-        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(runnableAutoHide);
 
         Animation slideUp = getSlideUp(DefaultAnimationDuration_500ms, topInset);
 
-        view1.startAnimation(slideUp);
+        snackBarView.startAnimation(slideUp);
 
         if (!isAnimating) {
             // Delay actual SnackBar dismissal until after the slide-up animation
-            view1.postDelayed(new Runnable() {
+            snackBarView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    view1.setVisibility(View.GONE);
+                    snackBarView.setVisibility(View.GONE);
                     snackbar.dismiss();
                 }
             }, slideUp.getDuration());
@@ -200,9 +249,11 @@ public class TopSnack {
         return topInset;
     }
 
+
     public static int getDuration() {
         return (int) (durationSlideDown + duration + durationSlideUp);
     }
+
 
     private static @NonNull Animation getSlideUp(@NonNull Integer animationDuration, int topInset) {
         Animation slideUp = new TranslateAnimation(
@@ -222,6 +273,183 @@ public class TopSnack {
         slideDown.setFillAfter(true);
         isAnimating = true;
         return slideDown;
+    }
+
+    private static @NonNull Animation getFadeAnim(@NonNull Integer animationDuration, int topInset) {
+        Animation fade = new AlphaAnimation(100, 0);
+        isAnimating = true;
+        return fade;
+    }
+
+
+    private static class MyOnTouchListener implements View.OnTouchListener {
+        private final View snackView;
+        private final Snackbar sb;
+        private float y1, y2;
+        private boolean isSwiping; // Make this global
+
+        private String swipeDirection;
+
+
+        private static final int MIN_DISTANCE = 75;
+
+        public MyOnTouchListener(View snackView, Snackbar sb, @NonNull String swipeDirection) {
+            this.snackView = snackView;
+            this.sb = sb;
+            isSwiping = false;
+            this.swipeDirection = swipeDirection;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    y1 = event.getRawY();
+                    isSwiping = false;
+                    isOnHold = true;
+                    handler.removeCallbacks(runnableAutoHide);
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    y2 = event.getRawY();
+                    float deltaY = y2 - y1;
+//                    snackView.setTranslationY(deltaY);
+
+                    if (Math.abs(deltaY) > MIN_DISTANCE) {
+                        isSwiping = true;
+                        Log.d("Swipe", "run: hold " + isSwiping);
+                    }
+
+
+                case MotionEvent.ACTION_UP:
+                    isOnHold = false;
+//                    autoHide(sb.getContext(), 5000);
+                    if (isSwiping) {
+                        y2 = event.getRawY();
+                        float valueY = y2 - y1;
+
+                        if (swipeDirection == null) {
+                            restartAutoHide();
+                        } else if (swipeDirection.equalsIgnoreCase("down")) {
+                            // Swipe down -> Dismiss Snackbar with downward animation
+                            if (valueY > 0) {
+                                snackView.setTranslationY(valueY);
+                                restartAutoHide();
+
+                                if (Math.abs(valueY) > MIN_DISTANCE) {
+                                    snackView.animate().translationY(snackView.getHeight()).setDuration(300)
+                                            .withEndAction(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    sb.dismiss(); // Dismiss Snackbar
+                                                    isSwiping = false; // Reset swipe flag
+                                                    Log.d("Swipe", "run: swipe down " + isSwiping);
+                                                    handler.removeCallbacks(runnableAutoHide);
+                                                }
+                                            }).start();
+                                }
+                            }
+                        } else if (swipeDirection.equalsIgnoreCase("up")) {
+                            // Swipe up -> Dismiss Snackbar with upward animation
+                            if (valueY < 0) {
+                                snackView.setTranslationY(valueY);
+                                restartAutoHide();
+
+                                if (Math.abs(valueY) > MIN_DISTANCE) {
+                                    snackView.animate().translationY(-snackView.getHeight()).setDuration(300)
+                                            .withEndAction(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    sb.dismiss(); // Dismiss Snackbar
+                                                    isSwiping = false; // Reset swipe flag
+                                                    Log.d("Swipe", "run: swipe up " + isSwiping);
+                                                    handler.removeCallbacks(runnableAutoHide);
+                                                }
+                                            }).start();
+                                }
+                            }
+                        } else if (swipeDirection.equalsIgnoreCase("both")) {
+                            if (isSwiping) {
+                                snackView.setTranslationY(valueY);
+                            }
+                            if (valueY > 0) {
+                                // Swipe down -> Dismiss Snackbar with downward animation
+                                snackView.animate().translationY(snackView.getHeight()).setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                sb.dismiss(); // Dismiss Snackbar
+                                                isSwiping = false; // Reset swipe flag
+                                                Log.d("Swipe", "run: swipe down " + isSwiping);
+                                                handler.removeCallbacks(runnableAutoHide);
+                                            }
+                                        }).start();
+                            } else {
+                                snackView.animate().translationY(-snackView.getHeight()).setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                sb.dismiss(); // Dismiss Snackbar
+                                                isSwiping = false; // Reset swipe flag
+                                                Log.d("Swipe", "run: swipe up " + isSwiping);
+                                                handler.removeCallbacks(runnableAutoHide);
+                                            }
+                                        }).start();
+                            }
+                        } else {
+                            Log.d("TAG", "onTouch: Error: wrong key " + swipeDirection);
+                        }
+
+//                        } else {
+//                            snackView.animate().translationY(0).setDuration(300)
+//                                    .start();
+//                            restartAutoHide();
+//                        }
+                    }
+                    break;
+            }
+            return true; // Consume the touch event
+        }
+
+
+        private void restartAutoHide() {
+//            if (isOnHold && snackbar.isShown()) {
+            handler.postDelayed(runnableAutoHide, duration);
+            Log.d("Swipe", "Auto-hide restarted");
+//            }
+        }
+
+    }
+
+
+    @Override
+    public boolean onDown(@NonNull MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(@NonNull MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(@NonNull MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(@androidx.annotation.Nullable MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(@NonNull MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(@androidx.annotation.Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+        return false;
     }
 
 }
