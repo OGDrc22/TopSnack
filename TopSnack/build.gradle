@@ -19,7 +19,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix 'v1.0.1'
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             consumerProguardFiles 'proguard-rules.pro'
             consumerProguardFiles 'consumer-rules.pro'
         }
