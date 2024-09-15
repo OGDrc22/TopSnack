@@ -1,17 +1,3 @@
-//buildscript {
-//    ext.kotlin_version = '1.7.20'
-//    repositories {
-//        google()
-//        mavenCentral()
-//        mavenLocal()            // << --- ADD This
-//    }
-//
-//    dependencies {
-//        classpath 'com.android.tools.build:gradle:7.1.3'
-//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//    }
-//}
-
 plugins {
     alias(libs.plugins.android.library)
     id("maven-publish")
@@ -67,17 +53,6 @@ afterEvaluate {
         }
     }
 }
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            groupId = 'com.github.OGDrc22'
-//            artifactId = 'TopSnack'
-//            version = '1.0'
-//
-//            from components.java
-//        }
-//    }
-//}
 
 
 dependencies {
@@ -88,17 +63,3 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
-
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            // Creates a Maven publication called "release".
-//            release(MavenPublication) {
-//                from components.release
-//                groupId = 'com.github.OGDrc22'
-//                artifactId = 'TopSnack'
-//                version = '1.0'
-//            }
-//        }
-//    }
-//}
